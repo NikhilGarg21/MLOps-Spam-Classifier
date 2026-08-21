@@ -5,6 +5,7 @@ import pickle
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score , f1_score
 from logger import get_logger
+from dvclive import Live
 
 logger = get_logger("model_evaluation")
 logger.debug("Model_evaluation started")
@@ -84,6 +85,14 @@ def main():
         y_test = test_data.iloc[:, -1].values
 
         metrics = evaluate_model(model, X_test, y_test)
+
+        with Live() as live:
+            live.log_metric("accuracy", metrics["accuracy"])
+            live.log_metric("precision", metrics["precision"])
+            live.log_metric("recall", metrics["recall"])
+            live.log_metric("f1", metrics["f1"])
+            live.log_metric("roc_auc", metrics["roc_auc"])
+
         save_metrics(metrics, "reports/metrics.json")
     except Exception as e:
         logger.error("Failed to complete the model evaluation process: %s", e)

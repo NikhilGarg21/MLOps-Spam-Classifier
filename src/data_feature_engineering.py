@@ -2,9 +2,27 @@ import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from logger import get_logger
 import pandas as pd
+import yaml
 
 logger = get_logger("data_feature_engenerring.log")
 logger.debug("starting data_feature_engeneering")
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 def load_data(file_path : str) -> pd.DataFrame :
     """Load data from a CSV file."""
@@ -57,9 +75,10 @@ def save_data(df : pd.DataFrame , file_path : str) -> None:
         logger.error('Unexpected error occurred while saving the data: %s', e)
         raise
 
-def main(max_features = 3000):
+def main():
     try:
-        max_features = max_features
+        params = load_params(params_path = "params.yaml")
+        max_features = params["data_feature_engineering"]["max_features"]
 
         train_data = load_data(r"C:\MLOPS\data\interim\train_preprocess.csv")
         test_data = load_data(r"C:\MLOPS\data\interim\test_preprocess.csv")

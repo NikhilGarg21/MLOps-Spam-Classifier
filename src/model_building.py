@@ -4,10 +4,30 @@ import pandas as pd
 import pickle
 from sklearn.svm import LinearSVC
 import numpy as np 
+import yaml
 
 
 logger = get_logger("model_building")
 logger.debug("Model_building started")
+
+def load_params(params_path: str) -> dict:
+    """Load parameters from a YAML file."""
+    try:
+        with open(params_path, 'r') as file:
+            params = yaml.safe_load(file)
+
+        params = params["model_building"]
+        logger.debug('Parameters retrieved from %s', params_path)
+        return params
+    except FileNotFoundError:
+        logger.error('File not found: %s', params_path)
+        raise
+    except yaml.YAMLError as e:
+        logger.error('YAML error: %s', e)
+        raise
+    except Exception as e:
+        logger.error('Unexpected error: %s', e)
+        raise
 
 def load_data(data_url : str) -> pd.DataFrame:
     """load data from a csv file"""
@@ -75,9 +95,9 @@ def save_model(model  , file_path : str) -> None:
         raise
 
 
-def main(params: dict = {"C": 1.0}):
+def main():
     try:
-        params = params
+        params = load_params(params_path = "params.yaml")
         train_data = load_data(r"C:\MLOPS\data\processed\train_tfidf.csv")
         X_train = train_data.iloc[ : , :- 1].values
         y_train = train_data.iloc[ :, -1].values
