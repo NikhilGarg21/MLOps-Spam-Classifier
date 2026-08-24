@@ -26,7 +26,7 @@ The project uses **DVC** for pipeline management and experiment tracking, **DVCL
 
 ## 📂 Project Structure
 
-"```text
+```text
 MLOPS/
 ├── data/
 │   ├── raw/
@@ -47,13 +47,13 @@ MLOPS/
 ├── .gitignore
 ├── .dvcignore
 └── README.md
-"```
+```
 
 ## ⚙️ Configuration
 
 Model and pipeline parameters are maintained in `params.yaml`.
 
-"```yaml
+```yaml
 data_ingestion:
   test_size: 0.20
 
@@ -63,7 +63,7 @@ feature_engineering:
 model_building:
   C: 1.0
   random_state: 42
-"```
+```
 
 ## 🔄 DVC Pipeline
 
